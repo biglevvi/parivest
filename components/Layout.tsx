@@ -6,7 +6,12 @@ import Navbar from "./Navbar";
 
 const Layout = ({ children: page }: { children: ReactElement }) => {
   return (
-    <Flex h='100vh' w='full' maxW='1440px' mx='auto'>
+    <Flex
+      h='100vh'
+      w='full'
+      maxW='1440px'
+      mx='auto'
+      display={["none", "none", "flex"]}>
       <Navbar />
       <Stack w='full' pos='relative'>
         <Header />
@@ -26,7 +31,9 @@ const Layout = ({ children: page }: { children: ReactElement }) => {
               borderRadius: "30px",
             },
           }}>
-          <Stack px='5' pb='4' >{page}</Stack>
+          <Stack px='5' pb='4'>
+            {page}
+          </Stack>
         </Box>
       </Stack>
     </Flex>

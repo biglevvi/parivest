@@ -45,6 +45,8 @@ const Users = () => {
 
   const { data, error } = useSWR(
     `${url}?pageNo=${page}&limitNo=${limit}${
+      filter === "Approved" ? "&access=approved" : ""
+    }${filter === "Pending" ? "&access=pending" : ""}${
       filter === "In-review" ? "&access=in-review" : ""
     }`,
     fetcher
