@@ -23,7 +23,14 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import useSWR from "swr";
 import { Loading } from "../../components/Loading";
 import {
@@ -35,6 +42,7 @@ import {
 import { User } from "../../components/types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { debounce } from "lodash";
 
 const CustomInput = forwardRef((props: any, ref: any) => {
   return (
@@ -50,7 +58,7 @@ const CustomInput = forwardRef((props: any, ref: any) => {
       />
       <InputRightElement>
         <IconButton
-        variant='ghost'
+          variant='ghost'
           aria-label=''
           size='xs'
           onClick={props.onClick}
@@ -65,12 +73,11 @@ const CustomInput = forwardRef((props: any, ref: any) => {
 
 const Users = () => {
   const router = useRouter();
-  const fromDateRef = useRef<HTMLInputElement>(null);
-  const toDateRef = useRef<HTMLInputElement>(null);
+  const [limit, setLimit] = useState(8);
   const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(1);
   const [date, setDate] = useState<{ from?: Date; to?: Date } | null>(null);
-  const [limit, setLimit] = useState(8);
+  const [search, setSearch] = useState<string | null>(null);
 
   const fetcher = async (args: string) => {
     // console.log(args);
@@ -84,16 +91,16 @@ const Users = () => {
   const toDate = date?.to?.toLocaleDateString();
 
   const { data, error } = useSWR(
-    `${url}?pageNo=${page}&limitNo=${limit}${
-      filter === "Approved" ? "&access=approved" : ""
-    }${filter === "Pending" ? "&access=pending" : ""}${
-      filter === "In-review" ? "&access=in-review" : ""
-    }${fromDate ? `&fromDate=${fromDate}` : ""}
+    search
+      ? `${url}?search=${search}&pageNo=${page}&limitNo=${limit}`
+      : `${url}?pageNo=${page}&limitNo=${limit}${
+          filter === "Approved" ? "&access=approved" : ""
+        }${filter === "Pending" ? "&access=pending" : ""}${
+          filter === "In-review" ? "&access=in-review" : ""
+        }${fromDate ? `&fromDate=${fromDate}` : ""}
     ${toDate ? `&toDate=${toDate}` : ""}`,
     fetcher
   );
-
-  // console.log();
 
   const localeDate = (date: string) => {
     const toDate = new Date(date);
@@ -118,6 +125,19 @@ const Users = () => {
         return { bg: "#F8F2D4", color: "#DABC29" };
     }
   };
+
+  // console.log(search);
+
+  const handleChange = debounce(
+    (e: ChangeEvent<HTMLInputElement> | undefined) => {
+      const input = e?.target.value;
+      // console.log(input);
+      if (input && input.length > 0) {
+        setSearch(input);
+      } else setSearch(null);
+    },
+    1000
+  );
 
   // if (error) return <Heading textAlign='center'>failed to load data</Heading>;
 
@@ -176,7 +196,14 @@ const Users = () => {
               <InputLeftElement>
                 <SearchSmIcon />
               </InputLeftElement>
-              <Input variant='flushed' placeholder='Search' size='xs' />
+              <Input
+                variant='flushed'
+                placeholder='Search'
+                size='xs'
+                autoFocus={!!search}
+                defaultValue={search || ""}
+                onChange={handleChange}
+              />
             </InputGroup>
           </HStack>
         </Flex>
