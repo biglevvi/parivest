@@ -23,16 +23,53 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { Loading } from "../../components/Loading";
-import { ChevronDownIcon, FileIcon, SearchSmIcon } from "../../components/Svgs";
+import {
+  CalenderIcon,
+  ChevronDownIcon,
+  FileIcon,
+  SearchSmIcon,
+} from "../../components/Svgs";
 import { User } from "../../components/types";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const CustomInput = forwardRef((props: any, ref: any) => {
+  return (
+    <InputGroup pt='0.5'>
+      <Input
+        px='2'
+        variant='flushed'
+        ref={ref}
+        value={props.value}
+        placeholder={props.placeholder}
+        onChange={props.onChange}
+        // rounded='xl'
+      />
+      <InputRightElement>
+        <IconButton
+        variant='ghost'
+          aria-label=''
+          size='xs'
+          onClick={props.onClick}
+          // bgColor='lavender'
+          rounded='7px'>
+          <CalenderIcon />
+        </IconButton>
+      </InputRightElement>
+    </InputGroup>
+  );
+});
 
 const Users = () => {
   const router = useRouter();
+  const fromDateRef = useRef<HTMLInputElement>(null);
+  const toDateRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(1);
+  const [date, setDate] = useState<{ from?: Date; to?: Date } | null>(null);
   const [limit, setLimit] = useState(8);
 
   const fetcher = async (args: string) => {
@@ -43,16 +80,20 @@ const Users = () => {
   };
   const url = "https://parivest-mock-api.herokuapp.com/api/v1/users";
 
+  const fromDate = date?.from?.toLocaleDateString();
+  const toDate = date?.to?.toLocaleDateString();
+
   const { data, error } = useSWR(
     `${url}?pageNo=${page}&limitNo=${limit}${
       filter === "Approved" ? "&access=approved" : ""
     }${filter === "Pending" ? "&access=pending" : ""}${
       filter === "In-review" ? "&access=in-review" : ""
-    }`,
+    }${fromDate ? `&fromDate=${fromDate}` : ""}
+    ${toDate ? `&toDate=${toDate}` : ""}`,
     fetcher
   );
 
-  // console.log(data[0]);
+  // console.log();
 
   const localeDate = (date: string) => {
     const toDate = new Date(date);
@@ -103,11 +144,29 @@ const Users = () => {
           </Menu>
         </Flex>
         <Flex justify='space-between'>
-          <HStack>
-            <Text>From</Text>
-            <input type='date' />
-            <Text>To</Text>
-            <input type='date' />
+          <HStack px='3'>
+            <Text fontSize='16px' color='#8C94A1'>
+              From
+            </Text>
+            <DatePicker
+              selected={date?.from}
+              placeholderText='dd/mm/yyyy'
+              onChange={(e: Date) =>
+                setDate((old) => ({ from: e, to: old?.to }))
+              }
+              customInput={<CustomInput />}
+            />
+            <Text fontSize='16px' color='#8C94A1'>
+              To
+            </Text>
+            <DatePicker
+              selected={date?.to}
+              placeholderText='dd/mm/yyyy'
+              onChange={(e: Date) =>
+                setDate((old) => ({ to: e, from: old?.from }))
+              }
+              customInput={<CustomInput />}
+            />
           </HStack>
           <HStack>
             <IconButton aria-label='file' bgColor='#5CA37B' p='1' rounded='4px'>
@@ -184,8 +243,8 @@ const Users = () => {
         </Tbody>
       </Table>
       <Flex justify='end' pr='10' pt='6'>
-        <Stack align='center'>
-          <HStack>
+        <Stack align='center' h='full'>
+          <HStack h='full'>
             <Button
               bgColor='#7FBABD'
               disabled={page < 2}
@@ -207,7 +266,7 @@ const Users = () => {
           </HStack>
           <HStack>
             <Text>
-              {data[0].data.length} of {data[0].metadata.total}
+              {data[0]?.data?.length} of {data[0]?.metadata?.total || 0}
             </Text>
           </HStack>
         </Stack>
