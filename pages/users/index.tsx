@@ -43,35 +43,10 @@ import { User } from "../../components/types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { debounce } from "lodash";
+import { NextPage } from "next";
+import CustomInput from "../../components/CustomInput";
 
-const CustomInput = forwardRef((props: any, ref: any) => {
-  return (
-    <InputGroup pt='0.5'>
-      <Input
-        px='2'
-        variant='flushed'
-        ref={ref}
-        value={props.value}
-        placeholder={props.placeholder}
-        onChange={props.onChange}
-        // rounded='xl'
-      />
-      <InputRightElement>
-        <IconButton
-          variant='ghost'
-          aria-label=''
-          size='xs'
-          onClick={props.onClick}
-          // bgColor='lavender'
-          rounded='7px'>
-          <CalenderIcon />
-        </IconButton>
-      </InputRightElement>
-    </InputGroup>
-  );
-});
-
-const Users = () => {
+function UsersPage() {
   const router = useRouter();
   const [limit, setLimit] = useState(8);
   const [filter, setFilter] = useState("All");
@@ -300,6 +275,6 @@ const Users = () => {
       </Flex>
     </Box>
   );
-};
+}
 
-export default Users;
+export default UsersPage;
