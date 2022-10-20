@@ -11,9 +11,14 @@ const Header = () => {
 
   return (
     <Flex
+      position='absolute'
+      top='0'
+      left='0'
+      right='0'
+      zIndex='1000'
       pl='7'
       pr='3'
-      h='93px'
+      h='70px'
       w='full'
       bgColor='#FFFFFF'
       align='center'

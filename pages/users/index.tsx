@@ -26,7 +26,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Loading } from "../../components/Loading";
-import { FileIcon, SearchSmIcon } from "../../components/Svgs";
+import { ChevronDownIcon, FileIcon, SearchSmIcon } from "../../components/Svgs";
 import { User } from "../../components/types";
 
 const Users = () => {
@@ -36,7 +36,7 @@ const Users = () => {
   const [limit, setLimit] = useState(8);
 
   const fetcher = async (args: string) => {
-    console.log(args);
+    // console.log(args);
     const res = await fetch(args);
     const result = await res.json();
     return result?.data;
@@ -50,7 +50,7 @@ const Users = () => {
     fetcher
   );
 
-  // console.log(data[0].data);
+  // console.log(data[0]);
 
   const localeDate = (date: string) => {
     const toDate = new Date(date);
@@ -81,108 +81,108 @@ const Users = () => {
   if (!data) return <Loading />;
 
   return (
-    <Stack pt='4' px='4'>
-      <Box rounded='lg' overflow='hidden' pb='4'>
-        <Box bgColor='white' p='4'>
-          <Flex>
-            <Menu>
-              <MenuButton as={Button}>{filter}</MenuButton>
-              <MenuList>
-                <MenuItem onClick={() => setFilter("All")}>All</MenuItem>
-                <MenuItem onClick={() => setFilter("Approved")}>
-                  Approved
-                </MenuItem>
-                <MenuItem onClick={() => setFilter("Pending")}>
-                  Pending
-                </MenuItem>
-                <MenuItem onClick={() => setFilter("In-review")}>
-                  In-review
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-          <Flex justify='space-between'>
-            <HStack>
-              <Text>From</Text>
-              <input type='date' />
-              <Text>To</Text>
-              <input type='date' />
-            </HStack>
-            <HStack>
-              <IconButton
-                aria-label='file'
-                bgColor='#5CA37B'
-                p='1'
-                rounded='4px'>
-                <FileIcon />
-              </IconButton>
-              <InputGroup>
-                <InputLeftElement>
-                  <SearchSmIcon />
-                </InputLeftElement>
-                <Input variant='flushed' placeholder='Search' size='xs' />
-              </InputGroup>
-            </HStack>
-          </Flex>
-        </Box>
-        <Table mt='1'>
-          <Thead bgColor='white'>
-            <Tr>
-              <Td color='#1B3C71' fontSize='16x'>
-                Date Joined
-              </Td>
-              <Td color='#1B3C71' fontSize='16x'>
-                User ID
-              </Td>
-              <Td color='#1B3C71' fontSize='16x'>
-                Name
-              </Td>
-              <Td color='#1B3C71' fontSize='16x'>
-                Email Address
-              </Td>
-              <Td color='#1B3C71' isNumeric>
-                Phone no.
-              </Td>
-              <Td color='#1B3C71'>Status</Td>
-              <Td color='#1B3C71'>Action</Td>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data &&
-              data[0]?.data?.map((user: User) => (
-                <Tr key={user._id}>
-                  <Td>{localeDate(user.createdAt)}</Td>
-                  <Td color='#1A8DD9'>{user.client_id}</Td>
-                  <Td>{`${user.first_name}${" "}${user?.last_name}`}</Td>
-                  <Td>{user.email}</Td>
-                  <Td>{user.phone}</Td>
-                  <Td
-                    as={Stack}
-                    // bgColor='red'
-                    p='2'
-                    align='center'>
-                    <Text
-                      textAlign='center'
-                      py='1'
-                      // px='3'
-                      w='95px'
-                      fontSize='14px'
-                      rounded='16px'
-                      bgColor={statusColor(user.status.access).bg}
-                      color={statusColor(user.status.access).color}>
-                      {user.status.access}
-                    </Text>
+    <Box rounded='lg' overflow='hidden' pb='2'>
+      <Box bgColor='white' py='3' px='4'>
+        <Flex>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              {filter}
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => setFilter("All")}>All</MenuItem>
+              <MenuItem onClick={() => setFilter("Approved")}>
+                Approved
+              </MenuItem>
+              <MenuItem onClick={() => setFilter("Pending")}>Pending</MenuItem>
+              <MenuItem onClick={() => setFilter("In-review")}>
+                In-review
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        <Flex justify='space-between'>
+          <HStack>
+            <Text>From</Text>
+            <input type='date' />
+            <Text>To</Text>
+            <input type='date' />
+          </HStack>
+          <HStack>
+            <IconButton aria-label='file' bgColor='#5CA37B' p='1' rounded='4px'>
+              <FileIcon />
+            </IconButton>
+            <InputGroup>
+              <InputLeftElement>
+                <SearchSmIcon />
+              </InputLeftElement>
+              <Input variant='flushed' placeholder='Search' size='xs' />
+            </InputGroup>
+          </HStack>
+        </Flex>
+      </Box>
+      <Table mt='1'>
+        <Thead bgColor='white'>
+          <Tr>
+            <Td color='#1B3C71' fontSize='16px'>
+              Date Joined
+            </Td>
+            <Td color='#1B3C71' fontSize='16px'>
+              User ID
+            </Td>
+            <Td color='#1B3C71' fontSize='16px'>
+              Name
+            </Td>
+            <Td color='#1B3C71' fontSize='16px'>
+              Email Address
+            </Td>
+            <Td color='#1B3C71' isNumeric>
+              Phone no.
+            </Td>
+            <Td color='#1B3C71'>Status</Td>
+            <Td color='#1B3C71'>Action</Td>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data &&
+            data[0]?.data?.map((user: User) => (
+              <Tr key={user._id}>
+                <Td fontSize='14px'>{localeDate(user.createdAt)}</Td>
+                <Td fontSize='14px' color='#1A8DD9'>
+                  {user.client_id}
+                </Td>
+                <Td fontSize='14px'>{`${user.first_name}${" "}${
+                  user?.last_name
+                }`}</Td>
+                <Td fontSize='14px'>{user.email}</Td>
+                <Td fontSize='14px'>{user.phone}</Td>
+                <Td
+                  // as={Stack}
+                  // bgColor='red'
+                  p='2'
+                  align='center'>
+                  <Text
+                    textAlign='center'
+                    py='1'
+                    // px='3'
+                    w='95px'
+                    fontSize='14px'
+                    rounded='16px'
+                    bgColor={statusColor(user.status.access).bg}
+                    color={statusColor(user.status.access).color}>
+                    {user.status.access}
+                  </Text>
+                </Td>
+                <Link href={`users/${user._id}`}>
+                  <Td cursor='pointer' color='#65ACB0'>
+                    View
                   </Td>
-                  <Link href={`users/${user._id}`}>
-                    <Td cursor='pointer' color='#65ACB0'>
-                      View
-                    </Td>
-                  </Link>
-                </Tr>
-              ))}
-          </Tbody>
-        </Table>
-        <Flex justify='end' pr='10'>
+                </Link>
+              </Tr>
+            ))}
+        </Tbody>
+      </Table>
+      <Flex justify='end' pr='10' pt='6'>
+        <Stack align='center'>
           <HStack>
             <Button
               bgColor='#7FBABD'
@@ -194,6 +194,7 @@ const Users = () => {
               Prev
             </Button>
             <Button
+              disabled={!!(data && data[0]?.data?.length < limit)}
               bgColor='#7FBABD'
               onClick={() => setPage((pageNo) => pageNo + 1)}
               fontWeight='400'
@@ -202,9 +203,14 @@ const Users = () => {
               Next
             </Button>
           </HStack>
-        </Flex>
-      </Box>
-    </Stack>
+          <HStack>
+            <Text>
+              {data[0].data.length} of {data[0].metadata.total}
+            </Text>
+          </HStack>
+        </Stack>
+      </Flex>
+    </Box>
   );
 };
 

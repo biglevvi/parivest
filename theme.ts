@@ -78,7 +78,8 @@ const theme = extendTheme({
     global: {
       body: {
         "fontSize": "16px",
-        // "fontWeight": "600",
+        "fontWeight": "500",
+        "letterSpacing": "0.374px",
         "&::-webkit-scrollbar": {
           width: "6px",
           backgroundColor: "transparent",

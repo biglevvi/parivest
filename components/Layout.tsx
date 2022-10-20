@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Stack } from "@chakra-ui/react";
 import Image from "next/image";
 import { ReactElement } from "react";
 import Header from "./Header";
@@ -8,10 +8,27 @@ const Layout = ({ children: page }: { children: ReactElement }) => {
   return (
     <Flex h='100vh' w='full' maxW='1440px' mx='auto'>
       <Navbar />
-      <Box w='full' pos='relative' >
+      <Stack w='full' pos='relative'>
         <Header />
-        {page}
-      </Box>
+        <Box
+          w='full'
+          pt='20'
+          overflowY='auto'
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: "8px",
+              backgroundColor: "transparent",
+              borderRadius: "30px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              width: "8px",
+              backgroundColor: "transparent",
+              borderRadius: "30px",
+            },
+          }}>
+          <Stack px='5' pb='4' >{page}</Stack>
+        </Box>
+      </Stack>
     </Flex>
   );
 };

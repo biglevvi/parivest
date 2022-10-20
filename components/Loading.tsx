@@ -1,4 +1,4 @@
-import { BeatLoader, DotLoader,FadeLoader } from "react-spinners";
+import { BeatLoader, DotLoader, HashLoader } from "react-spinners";
 
 export const Loading = () => {
   return (
@@ -15,7 +15,7 @@ export const Loading = () => {
         bottom: "0",
         position: "absolute",
       }}>
-      <BeatLoader color='#295AA9' />
+      <HashLoader color='#295AA9' />
     </div>
   );
 };
